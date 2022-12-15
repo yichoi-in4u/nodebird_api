@@ -6,10 +6,13 @@ const morgan = require('morgan')
 const session = require('express-session')
 const nunjucks = require('nunjucks')
 const dotenv = require('dotenv')
+const cors = require('cors')
 
 dotenv.config()
 const indexRouter = require('./routes')
 const authRouter = require('./routes/auth')
+const v1 = require('./routes/v1')
+const v2 = require('./routes/v2')
 const { sequelize } = require('./models')
 const passportConfig = require('./passport')
 
@@ -48,9 +51,12 @@ app.use(
 )
 app.use(passport.initialize())
 app.use(passport.session())
+app.use(cors())
 
 app.use('/', indexRouter)
 app.use('/auth', authRouter)
+app.use('/v1', v1)
+app.use('/v2', v2)
 
 app.use((req, res, next) => {
   const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`)
